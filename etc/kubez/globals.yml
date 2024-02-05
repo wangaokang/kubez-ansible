@@ -2,6 +2,7 @@
 #####################
 # kubernetes options
 #####################
+# Enable an high availability kubernetes cluster.
 #enable_kubernetes_ha: "no"
 
 kube_release: 1.23.6
@@ -17,6 +18,10 @@ network_interface: "eth0"
 # the hosts running keepalived for high-availability.
 #kube_vip_address: ""
 
+# Enable haproxy and keepalived
+# This configuration is usually enabled when self-created VMs require high availability.
+#enable_haproxy: "no"
+
 # Listen port for kubernetes.
 # 启用 haproxy + keepalived 时, 监听端口推荐使用 8443
 #kube_vip_port: 6443
@@ -24,27 +29,29 @@ network_interface: "eth0"
 # Kubernetes network cni options
 #enable_calico: "no"
 
+# kubernetes 镜像仓库地址，默认阿里云，用户可根据实际情况配置
+# 可使用 pixiu 社区镜像仓库：docker.io/pixiuio
+image_repository: "registry.cn-hangzhou.aliyuncs.com/google_containers"
+
 ##################
 # Runtime Options
 ##################
 # runtime docker version
-docker_release: 20.10.15
-# use apt-cache madison docker-ce to find the wanted version
-docker_release_ubuntu: 5:20.10.7~3-0~ubuntu-xenial
-docker_release_debian: 5:20.10.7~3-0~debian-buster
-
+# 通过 apt-cache madison docker-ce 查找合适版本
+docker_release: ""
 # runtime containerd version
-containerd_release: 1.6.4
-containerd_release_ubuntu: 1.6.12-0ubuntu1~18.04.1
-containerd_release_debian: 1.6.12-1
+containerd_release: ""
+
+# 自定义 docker 数据存放目录
+docker_data_dir: "{{ runtime_data_dir }}"
+# 自定义 containerd 数据存放目录
+containerd_data_dir: "{{ runtime_data_dir }}"
 
 #####################
 # keepalived options
 #####################
 # Arbitrary unique number from 0..255
 #keepalived_virtual_router_id: "68"
-
-#enable_haproxy: "no"
 
 ###################
 # Registry options
@@ -72,6 +79,11 @@ containerd_release_debian: 1.6.12-1
 #nfs_storage_class: managed-nfs-storage
 #nfs_server: "{{ hostvars[groups['storage'][0]]['ansible_' + api_interface]['ipv4']['address'] }}"
 #nfs_share: /data/share
+
+#############################
+# Pixiu-localstorage Options
+#############################
+#enable_pixiu_localstorage: "no"
 
 #enable_rbd_provisioner: "no"
 #pool_name: kube
@@ -111,19 +123,34 @@ containerd_release_debian: 1.6.12-1
 # Prometheus Options
 #####################
 #enable_prometheus: "no"
+#prometheus_namespace: "{{ kubez_namespace }}"
+
+# helm 仓库配置项, 默认为 pixiu helm chart 仓库
+#prometheus_repo_name: "{{ default_repo_name }}"
+#prometheus_repo_url: "{{ default_repo_url }}"
+#prometheus_path: pixiuio/prometheus
+#prometheus_version: 25.10.0
 
 #################
 # Grafana Options
 #################
 #enable_grafana: "no"
+#grafana_namespace: "{{ kubez_namespace }}"
 # Customize grafana user and password
 #grafana_admin_user: admin
 #grafana_admin_password: admin
+
+# helm 仓库配置项
+#grafana_repo_name: "{{ default_repo_name }}"
+#grafana_repo_url: "{{ default_repo_url }}"
+#grafana_path: pixiuio/grafana
+#grafana_version: 7.2.4
 
 ##############
 # Loki Options
 ##############
 #enable_loki: "no"
+#loki_namespace: "{{ kubez_namespace }}"
 
 # Storage class to be used
 #loki_storage_class: managed-nfs-storage
@@ -151,13 +178,32 @@ s3:
   s3ForcePathStyle: true
   insecure: true
 
+# helm 仓库配置项
+#loki_repo_name: "{{ default_repo_name }}"
+#loki_repo_url: "{{ default_repo_url }}"
+#loki_path: pixiuio/loki
+#loki_version: 5.41.8
+
 ##################
 # promtail Options
 ##################
 #enable_promtail: "no"
+#promtail_namespace: "{{ kubez_namespace }}"
 
 # Loki server url for push
 #loki_url: http://loki-gateway/loki/api/v1/push
+
+# helm 仓库配置项
+#promtail_repo_name: "{{ default_repo_name }}"
+#promtail_repo_url: "{{ default_repo_url }}"
+#promtail_path: pixiuio/promtail
+#promtail_version: 6.15.4
+
+##################
+# metallb Options
+##################
+#enable_metallb: "no"
+#metallb_namespace: "{{ kubez_namespace }}"
 
 ###############
 # Helm Options
@@ -206,6 +252,16 @@ s3:
 #fluentd_namespace: "{{ kubez_namespace }}"
 #fluentd_chart_version: 0.3.9
 
+######################
+# Artifactory Options
+######################
+#enable_artifactory: "no"
+
+#artifactory_namespace: "{{ kubez_namespace }}"
+#artifactory_storage_class: managed-nfs-storage
+#artifactory_size: "20Gi"
+#postgresql_size: "20Gi"
+
 ##################
 # Jenkins Options
 ##################
@@ -216,6 +272,25 @@ s3:
 
 # The initial password for admin
 #initial_admin_password: admin123456
+
+# helm 仓库配置项, 默认为 pixiu helm chart 仓库
+#jenkins_repo_name: "{{ default_repo_name }}"
+#jenkins_repo_url: "{{ default_repo_url }}"
+#jenkins_path: pixiuio/jenkins
+#jenkins_version: 4.12.0
+
+#################
+# Tekton Options
+#################
+#enable_tekton: "no"
+
+#######################
+# cert-manager Options
+#######################
+# enable_cert_manager: "no"
+
+# cert_manager_names: cert-manager
+# cert_manager_namespace: "{{ kubez_namespace }}"
 
 #################
 # Harbor Options
@@ -306,3 +381,24 @@ s3:
 # Metrics Server Options
 #######################
 #enable_metrics_server: "yes"
+
+####################
+# Chaos Mesh Options
+####################
+# https://chaos-mesh.org/docs/production-installation-using-helm/
+#enable_chaos_mesh: "no"
+#chaos_mesh_chart_version: "2.6.2"
+
+#chaos_mesh_name: chaos-mesh
+#chaos_mesh_namespace: "{{ kubez_namespace }}"
+#socket_path: /var/run/docker.sock
+#runtime: docker
+
+
+################
+# Cilium Options
+################
+# https://docs.cilium.io/en/stable/overview/intro/
+#enable_cilium: "no"
+#cilium_chart_version: 1.14.5
+#cilium_namespace: kube-system

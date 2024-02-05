@@ -6,7 +6,9 @@ To provide quick deployment tools for kubernetes cluster and cloud native applic
 [![Release][release-image]][release-url]
 [![License][license-image]][license-url]
 
-This session has been tested on CentOS 7, Debian 10 and Ubuntu 18.04 which supported by python2.7 for now.
+This session has been tested on Rocky 8.5, Debian 11 and Ubuntu 20.04+ which supported by python3.
+
+More distribution supported see [more](https://github.com/gopixiu-io/kubez-ansible/tree/stable/tiger)
 
 ## Getting Started
 Learn about Kubez Ansible by reading the documentation online [kubez-ansible](https://www.bilibili.com/video/BV1L84y1h7LE/).
@@ -14,7 +16,8 @@ Learn about Kubez Ansible by reading the documentation online [kubez-ansible](ht
 ## Supported Components
 - 集群指南
   - [单节点集群](docs/install/all-in-one.md) 单节点集群的快速部署
-  - [高可用集群](docs/install/multinode.md) 多节点和高可用集群部署
+  - [多节点集群](docs/install/multinode.md) 多节点集群部署 (1master + 多node)
+  - [高可用集群](docs/install/availability.md) 高可用集群部署 (3master + 多node)
   - [扩容](docs/install/expansion.md)
   - [销毁](docs/install/destroy.md)
 
@@ -37,6 +40,8 @@ Learn about Kubez Ansible by reading the documentation online [kubez-ansible](ht
     - [Nginx Ingress](docs/apply/ingress.md)
     - [Dashboard](docs/apply/dashboard.md)
     - [Metrics Server](docs/apply/metrics.md)
+    - [MetalLB](docs/apply/metallb.md)
+    - [Cilium&Hubble](docs/apply/cilium.md)
   - 日志监控
     - [Loki](docs/apply/loki.md)
     - [Grafana](docs/apply/grafana.md)
@@ -52,11 +57,18 @@ Learn about Kubez Ansible by reading the documentation online [kubez-ansible](ht
   - 微服务
     - [Isito](docs/apply/istio.md)
   - CICD
+    - [Tekton](docs/apply/tekton.md)
     - [Jenkins](docs/apply/jenkins.md)
     - [Harbor](docs/apply/harbor.md)
+    - [Jfrog-Artifactory](docs/apply/artifactory.md)
+  - Certificates
+    - [Cert-manager](docs/apply/cert-manager.md)
+  - 混沌工程
+    - [ChaosMesh](docs/apply/chaos-mesh.md)
 
 - 自研云原生
   - [Pixiu](https://github.com/caoyingjunz/pixiu)
+  - [Localstorage](https://github.com/caoyingjunz/csi-driver-localstorage)
   - [Pixiu-autoscaler](https://github.com/caoyingjunz/pixiu-autoscaler)
   - [PodSet](https://github.com/caoyingjunz/podset-operator)
 
